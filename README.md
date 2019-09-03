@@ -3,7 +3,7 @@ Welcome! Thank you so much for your interest in Kanopi Studios. This project is 
 
 ## The rules
 1. Please spend no more than **three hours** on this project. It's okay if you do not finish in that time; just make sure you provide a clear outline of what you have done, what is still to do, and any known issues.
-2. Please do your work in a branch of this repository.
+2. Please do your work in a **private fork** of this repository.
 3. Please use WordPress coding and documentation standards as defined in PHPCS.
 4. All files must be managed in a plugin.
 3. Your solution may not rely on a third-party plugin.
@@ -28,4 +28,6 @@ If you have extra time and want to show off, here are some ideas!
 * Animations
 
 ## Submitting your work
-When you are ready to submit your work, please create a pull request against master and tag Kat (@kwhite) and Shane (@wakingmorning) as reviewers.
+When you are ready to submit your work, please send a link to your fork repository to hr@kanopi.com, katherine@kanopi.com, and shane@kanopi.com.
+
+Good luck! We are cheering for you! Ready... set... go! :checkered_flag:
