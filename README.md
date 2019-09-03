@@ -4,10 +4,11 @@ Welcome! Thank you so much for your interest in Kanopi Studios. This project is 
 ## The rules
 1. Please spend no more than **three hours** on this project. It's okay if you do not finish in that time; just make sure you provide a clear outline of what you have done, what is still to do, and any known issues.
 2. Please do your work in a **private fork** of this repository.
-3. Please use WordPress coding and documentation standards as defined in PHPCS.
-4. All files must be managed in a plugin.
-3. Your solution may not rely on a third-party plugin.
-4. Your work will be tested on a default WordPress installation running Twentynineteen and using the standard Theme Unit Test content.
+3. The timestamp of your last commit will be the cutoff time used. Any commits after the three-hour mark will not be considered as part of your submission.
+4. Please use WordPress coding and documentation standards as defined in PHPCS.
+5. All files must be managed in a plugin.
+6. Your solution may not rely on a third-party plugin.
+7. Your work will be tested on a default WordPress installation running Twentynineteen and using the standard Theme Unit Test content.
 
 ## The task
 1. Get the quote of the day using the public API from [They Said So](https://theysaidso.com/api/).
