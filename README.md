@@ -3,7 +3,7 @@ Welcome! Thank you so much for your interest in Kanopi Studios. This project is 
 
 ## The rules
 1. Please spend no more than **three hours** on this project. It's okay if you do not finish in that time; just make sure you provide a clear outline of what you have done, what is still to do, and any known issues.
-2. Please do your work in a **private fork** of this repository.
+2. Please do your work in a **fork** of this repository.
 3. The timestamp of your last commit will be the cutoff time used. Any commits after the three-hour mark will not be considered as part of your submission.
 4. Please use WordPress coding and documentation standards as defined in PHPCS.
 5. All files must be managed in a plugin.
