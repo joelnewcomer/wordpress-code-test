@@ -168,13 +168,9 @@ function run_quote_of_the_day() {
 		<div>
 			<h2>Quote of the Day Options</h2>
 			<form method="post" action="options.php">
-			<?php settings_fields( 'qod_options_group' ); ?>
-			<?php $options = get_option( 'qod_options_group' );
-				echo $options['qod_cat'];
-			?>
-			
-			<?php
-				// echo 'selected: ' . $options['qod_cat'];
+				<?php
+				settings_fields( 'qod_options_group' );
+				$options = get_option( 'qod_options_group' );
 					// Get the saved transient containing quote of the day
 		$qod_cats_result = get_transient( 'qod_cats' );
 		if(empty( $qod_cats_result) ) {
@@ -193,7 +189,11 @@ function run_quote_of_the_day() {
 
 <select name="qod_options_group[qod_cat]" id="qod_options_group[qod_cat]">
 	<?php foreach ($qod_cats as $key => $value) {
-		echo '<option value="' . $key . '">' . $value . '</option>';
+		$selected = '';
+		if ($key == $options['qod_cat']) {
+			$selected = ' selected';
+		}
+		echo '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
 	} ?>
 </select>
 			</td>
