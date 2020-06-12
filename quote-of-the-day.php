@@ -74,6 +74,58 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-quote-of-the-day.php';
  * @since    1.0.0
  */
 function run_quote_of_the_day() {
+	
+	function call_api($method, $url, $data = false,$api_key=null) {
+	    $curl = curl_init();
+	
+	    switch ($method)
+	    {
+		case "POST":
+		    curl_setopt($curl, CURLOPT_POST, 1);
+	
+		    if ($data)
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+		    break;
+		case "PUT":
+		    curl_setopt($curl, CURLOPT_PUT, 1);
+		    break;
+		default:
+		    if ($data)
+			$url = sprintf("%s?%s", $url, http_build_query($data));
+	    }
+	
+	    $headers = [
+		'Content-Type: application/json'
+		];
+	    if ( !empty($api_key))
+		$headers[] = 'X-TheySaidSo-Api-Secret: '. $api_key;
+	
+	    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+	    curl_setopt($curl, CURLOPT_URL, $url);
+	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	
+	    $result = curl_exec($curl);
+	
+	    curl_close($curl);
+	
+	    return $result;
+	}
+
+	
+	function add_quote_of_the_day( $content ) {
+		$qod_json = call_api("GET","https://quotes.rest/qod?category=funny",false,null);
+		$qod_result = json_decode($qod_json);
+		
+		$qod = '<blockquote><h2>Quote of the Day</h2>' . wpautop($qod_result->contents->quotes[0]->quote) . '</blockquote>';
+		$qod .= '<pre>';
+		$qod .= print_r($qod_result, true);
+    	$qod .= '</pre>';
+    	if ( function_exists('get_field') ) {
+			$content .= $qod;
+    	}
+		return $content;
+	}
+	add_filter( 'the_content', 'add_quote_of_the_day' );
 
 	$plugin = new Quote_Day();
 	$plugin->run();
