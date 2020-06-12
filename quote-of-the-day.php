@@ -75,23 +75,22 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-quote-of-the-day.php';
  */
 function run_quote_of_the_day() {
 	
-	function call_api($method, $url, $data = false,$api_key=null) {
+	function call_qod_api($method, $url, $data = false,$api_key=null) {
 	    $curl = curl_init();
 	
-	    switch ($method)
-	    {
-		case "POST":
-		    curl_setopt($curl, CURLOPT_POST, 1);
-	
-		    if ($data)
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-		    break;
-		case "PUT":
-		    curl_setopt($curl, CURLOPT_PUT, 1);
-		    break;
-		default:
-		    if ($data)
-			$url = sprintf("%s?%s", $url, http_build_query($data));
+	    switch ($method) {
+			case "POST":
+			    curl_setopt($curl, CURLOPT_POST, 1);
+			
+			    if ($data)
+				curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+			    break;
+			case "PUT":
+			    curl_setopt($curl, CURLOPT_PUT, 1);
+			    break;
+			default:
+			    if ($data)
+				$url = sprintf("%s?%s", $url, http_build_query($data));
 	    }
 	
 	    $headers = [
@@ -113,19 +112,98 @@ function run_quote_of_the_day() {
 
 	
 	function add_quote_of_the_day( $content ) {
-		$qod_json = call_api("GET","https://quotes.rest/qod?category=funny",false,null);
-		$qod_result = json_decode($qod_json);
+		// Get the saved transient containing quote of the day
+		$qod_result = get_transient( 'qod' );
+		if(empty( $qod_result) ) {
+			// Get the JSON data for the quote of the day and decode it.
+			$qod_json = call_qod_api("GET","https://quotes.rest/qod",false,null);
+			$qod_result = json_decode($qod_json);
+			set_transient( 'qod', $qod_result, HOUR_IN_SECONDS );
+		}
 		
-		$qod = '<blockquote><h2>Quote of the Day</h2>' . wpautop($qod_result->contents->quotes[0]->quote) . '</blockquote>';
-		$qod .= '<pre>';
-		$qod .= print_r($qod_result, true);
-    	$qod .= '</pre>';
-    	if ( function_exists('get_field') ) {
-			$content .= $qod;
-    	}
-		return $content;
+		// Set up the variables
+		$quote = $qod_result->contents->quotes[0]->quote;
+		$url = $qod_result->contents->quotes[0]->permalink;
+		$author = $qod_result->contents->quotes[0]->author;
+		$tags = $qod_result->contents->quotes[0]->tags;
+		
+		$qod = '<div class="kanopi-qod"><h4>Quote of the Day</h4><blockquote>' . wpautop($qod_result->contents->quotes[0]->quote);
+		$qod .= '<footer>';
+		$qod .= '<cite><a href="' . $url . '" target="_blank">&mdash; ' . $author . '</a></cite>';
+		$qod .= '<div class="qod-tags">';
+		foreach ($tags as $tag) {
+			$qod .= '<span class="qod-tag">' . $tag . '</span>';
+		}
+		$qod .= '</div> <!-- qod-tags -->';
+		$qod .= '</footer>';
+		$qod .= '</blockquote>';
+		$qod .= '<span style="z-index:50;font-size:0.9em; font-weight: bold;">
+      <img src="https://theysaidso.com/branding/theysaidso.png" height="20" width="20" alt="theysaidso.com"/>
+      <a href="https://theysaidso.com" title="Powered by quotes from theysaidso.com" style="color: #ccc; margin-left: 4px; vertical-align: middle;">
+        They Said So®
+      </a>
+</span>';
+		$qod .= '</div><!-- kanopi-qod -->';
+		// $qod .= '<pre>';
+		// $qod .= print_r($qod_result, true);
+    	// $qod .= '</pre>';
+		return $qod;
 	}
 	add_filter( 'the_content', 'add_quote_of_the_day' );
+	
+	//Register settings
+	function qod_options_add(){
+    	register_setting( 'qod_options_group', 'qod_options_group' );
+	}
+	
+	function qod_register_options_page() {
+		add_options_page('Quote of the Day', 'Quote of the Day', 'manage_options', 'quote_of_the_day', 'qod_options_page');
+	}
+	
+	//Grant access to options page 
+	add_action( 'admin_init', 'qod_options_add' );
+	add_action('admin_menu', 'qod_register_options_page');
+	
+	function qod_options_page() { ?>
+		<div>
+			<h2>Quote of the Day Options</h2>
+			<form method="post" action="options.php">
+			<?php settings_fields( 'qod_options_group' ); ?>
+			<?php $options = get_option( 'qod_options_group' );
+				echo $options['qod_cat'];
+			?>
+			
+			<?php
+				// echo 'selected: ' . $options['qod_cat'];
+					// Get the saved transient containing quote of the day
+		$qod_cats_result = get_transient( 'qod_cats' );
+		if(empty( $qod_cats_result) ) {
+			// Get the JSON data for the quote of the day and decode it.
+			$qod_cats_json = call_qod_api("GET","https://quotes.rest/qod/categories",false,null);
+			$qod_cats_result = json_decode($qod_cats_json);
+			set_transient( 'qod_cats', $qod_cats_result, HOUR_IN_SECONDS );
+		}
+		$qod_cats = $qod_cats_result->contents->categories;
+
+		?>			
+			<table>
+			<tr valign="top">
+			<td>
+				<label for="qod_cat">Choose a  category:</label>
+
+<select name="qod_options_group[qod_cat]" id="qod_options_group[qod_cat]">
+	<?php foreach ($qod_cats as $key => $value) {
+		echo '<option value="' . $key . '">' . $value . '</option>';
+	} ?>
+</select>
+			</td>
+			</tr>
+			</table>
+			<?php  submit_button(); ?>
+			</form>
+			</div>
+			<?php
+	}
 
 	$plugin = new Quote_Day();
 	$plugin->run();

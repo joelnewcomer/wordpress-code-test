@@ -73,7 +73,7 @@ class Quote_Day_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->quote_of_the_day, plugin_dir_url( __FILE__ ) . 'css/plugin-name-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->quote_of_the_day, plugin_dir_url( __FILE__ ) . 'css/quote-of-the-day-public.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +96,7 @@ class Quote_Day_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->quote_of_the_day, plugin_dir_url( __FILE__ ) . 'js/plugin-name-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->quote_of_the_day, plugin_dir_url( __FILE__ ) . 'js/quote-of-the-day-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
